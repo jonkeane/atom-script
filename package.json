@@ -83,5 +83,8 @@
   },
   "devDependencies": {
     "grunt": "~0.4.5"
+  },
+  "scripts": {
+    "prepublish": "node utils/updatePackage.js"
   }
 }
