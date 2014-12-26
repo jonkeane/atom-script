@@ -1,10 +1,10 @@
 var open = require("nodegit").Repository.open;
 
 var authors = {}
+var rankings = {}
 
 open(".")
   .then(function(repo) {
-    console.log(repo);
     return repo.getHeadCommit();
   })
   // Display information about commits at HEAD
@@ -15,12 +15,20 @@ open(".")
     // Listen for commit events from the history.
     history.on("commit", function(commit) {
       var author = commit.author();
-      // Use their last email, assumes no same-named people contribute to the project
-      authors[author.name()] = author.email();
+      var name = author.name();
+
+      // Take their most recent commit as the email they care about
+      authors[name] = authors[name] || author.email();
+      
+      // Count up their total number of commits
+      rankings[name] = rankings[name] || 0
+      rankings[name]++
+
     });
 
     history.on("end", function(commits) {
       console.log(authors)
+      console.log(rankings)
     });
   
     // Start emitting events.
