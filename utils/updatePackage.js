@@ -7,11 +7,13 @@ var pkg = require('../package.json')
 var authors = {}
 var rankings = {}
 
+var PREVIOUS_RELEASE_NOTE = new RegExp("^Prepare " + pkg["version"] + " release\s*");
+var accumulatedChanges = []
+var collecting = true;
+
 var ignore = {
   "dev": "dev@debian7devel"
 }
-
-console.log("Updating package.json");
 
 open(".")
   .then(function(repo) {
@@ -28,6 +30,17 @@ open(".")
       var name = author.name();
       var email = author.email();
 
+      var message = commit.message();
+
+      if (collecting) {
+        if(message.match(PREVIOUS_RELEASE_NOTE)){
+          collecting = false;
+        }
+        else {
+          accumulatedChanges.push(message);
+        }
+      }
+
       if (! ( ignore[name] && ignore[name] === email )) {
         // Take their most recent commit as the email they care about
         // Assumes everyone has a unique name
@@ -41,12 +54,19 @@ open(".")
     });
 
     history.on("end", function(commits) {
-      var contributors = []
 
+      console.log("Summarize these for the CHANGELOG: ");
+      console.log(">>>>>>>>>>>>>>>");
+      for (var i = 0; i < accumulatedChanges.length; i++) {
+        console.log(accumulatedChanges[i]);
+      }
+      console.log("<<<<<<<<<<<<<<<");
+
+      // Create the updated contributors array
+      var contributors = []
       for (var name in rankings) {
         contributors.push({"name": name, "email": authors[name]})
       }
-
       pkg['contributors'] = contributors;
 
       fs.writeFile("package.json", JSON.stringify(pkg, null, 2), function(err) {
