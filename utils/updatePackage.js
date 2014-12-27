@@ -11,15 +11,7 @@ var ignore = {
   "dev": "dev@debian7devel"
 }
 
-//readPkgJson("./package.json", console.error, true, function (err, data) {
-//  if (err) {
-//    console.error("Error reading script's package.json");
-//    console.error(err);
-//  }
-//  console.log(data);
-//});
-
-console.log(pkg);
+console.log("Updating package.json");
 
 open(".")
   .then(function(repo) {
