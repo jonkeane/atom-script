@@ -139,6 +139,11 @@ module.exports =
       command: "Rscript"
       args: (context) -> ['-e', 'library(knitr); knit("'+context.filepath+'", output="'+context.filepath.replace('.Rnw','.tex')+'")']
 
+  LaTeX:
+    "File Based":
+      command: "texi2pdf"
+      args: (context) -> ['-c', context.filepath, '-o', context.filepath.replace('.tex','.pdf')]
+
   LilyPond:
     "File Based":
       command: "lilypond"
