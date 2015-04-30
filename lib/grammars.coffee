@@ -134,6 +134,11 @@ module.exports =
       command: "julia"
       args: (context) -> [context.filepath]
 
+  Knitr:
+    "File Based":
+      command: "Rscript"
+      args: (context) -> ['-e', 'library(knitr); knit("'+context.filepath+'", output="'+context.filepath.replace('.Rnw','.tex')+'")']
+
   LilyPond:
     "File Based":
       command: "lilypond"
